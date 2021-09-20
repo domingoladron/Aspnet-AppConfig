@@ -1,0 +1,42 @@
+version: '3.4'
+
+services:
+  myapi:
+    env_file:
+      - ./.env
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - USE_LOCAL_CONFIG_FILE=false
+      - APPCONFIG_APPID=ybhn6xi
+      - APPCONFIG_ENVID=41wexz1
+      - APPCONFIG_PROFILEID=znsr7i1
+    ports:
+      - 54436:80
+    logging:
+        driver: splunk
+        options:
+          splunk-token: "${SPLUNK_HEC_TOKEN}"
+          splunk-url: "http://localhost:8088"
+          splunk-sourcetype: "pullconfig-myapi"
+          splunk-format: "json"
+          labels: "environment"
+
+  myworker:
+    env_file:
+      - ./.env
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - USE_LOCAL_CONFIG_FILE=false
+      - APPCONFIG_APPID=ybhn6xi
+      - APPCONFIG_ENVID=41wexz1
+      - APPCONFIG_PROFILEID=xw8h8b7
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+    logging:
+        driver: splunk
+        options:
+          splunk-token: "${SPLUNK_HEC_TOKEN}"
+          splunk-url: "http://localhost:8088"
+          splunk-sourcetype: "pullconfig-myworker"
+          splunk-format: "json"
+          labels: "environment"
